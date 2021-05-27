@@ -7,6 +7,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 set(SOURCES
     JsonParser_tests.cpp
     XmlParser_tests.cpp
+    YamlParser_tests.cpp
     ValidatedReportParser_tests
 )
 
