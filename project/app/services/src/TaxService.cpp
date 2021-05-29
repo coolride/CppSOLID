@@ -4,10 +4,15 @@
 
 namespace services {
 TaxService::TaxService(
-    const types::User& user, const auth::IAuthorization& authManager, const parsers::IReportParser& reportParser)
+    const types::User& user,
+    const auth::IAuthorization& authManager,
+    const parsers::IReportParser& reportParser,
+    const storage::IStorage& storage
+)
     : user{ user }
     , authManager{ authManager }
     , reportParser{ reportParser }
+    , storage{ storage }
 {
 }
 

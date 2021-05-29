@@ -9,6 +9,7 @@
 #include "constants/Constants.hpp"
 #include "mocks/AuthorizationMock.hpp"
 #include "mocks/ReportParserMock.hpp"
+#include "mocks/StorageMock.hpp"
 #include "types/Report.hpp"
 #include "types/User.hpp"
 
@@ -19,13 +20,14 @@ using ::testing::StrictMock;
 struct TaxServiceTests : testing::Test {
 
     TaxServiceTests()
-        : sut(user, authMock, parserMock)
+        : sut(user, authMock, parserMock, storageMock)
     {
     }
 
     types::User user;
     StrictMock<auth::AuthorizationMock> authMock;
     StrictMock<parsers::ReportParserMock> parserMock;
+    StrictMock<storage::StorageMock> storageMock;
     services::TaxService sut;
 
     const std::string rawReport = "{}";
@@ -36,6 +38,7 @@ TEST_F(TaxServiceTests, whenReportParsingAndAuthorizationSucceed_returnOK)
 {
     EXPECT_CALL(authMock, isAuthorized(user.login, report.payer)).WillOnce(Return(true));
     EXPECT_CALL(parserMock, parseReport(rawReport)).WillOnce(Return(report));
+    EXPECT_CALL(storageMock, storeReport(report)).WillOnce(Return(types::StorageResult::Success));
     ASSERT_EQ(sut.onReportRequest(rawReport), OK);
 }
 

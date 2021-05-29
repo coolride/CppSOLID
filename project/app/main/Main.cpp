@@ -5,6 +5,7 @@
 #include "auth/AuthManager.hpp"
 #include "configs/StartupConfig.hpp"
 #include "parsers/ParsersFactory.hpp"
+#include "storage/StorageFactory.hpp"
 #include "servers/Server.hpp"
 #include "services/TaxServiceFactory.hpp"
 
@@ -12,15 +13,22 @@ int main(int argc, char* argv[])
 {
     try {
         if (const auto config = optionsToStartupConfig(argc, argv)) {
-            std::cout << "Starting server on port " << config->port << '\n';
+            std::cout
+            << "Starting server on port " << config->port << '\n'
+            << "Report format is set as " << config->reportFormat << '\n'
+            << "Storage format is set as " << config->storageFormat << '\n'
+            ;
 
             const auth::AuthManager authManager;
-            const parsers::ParsersFactory parsersFactory(config->format);
+            const parsers::ParsersFactory parsersFactory(config->reportFormat);
 
             const auto credentialsParser = parsersFactory.createCredentialsParser();
             const auto reportParser = parsersFactory.createReportParser();
 
-            const services::TaxServiceFactory taxServiceFactory(authManager, *reportParser);
+            const storage::StorageFactory storageFactory(config->storageFormat);
+            const auto storage = storageFactory.createStorage();
+
+            const services::TaxServiceFactory taxServiceFactory(authManager, *reportParser, *storage);
 
             servers::runServer(config->port, authManager, *credentialsParser, taxServiceFactory);
         }

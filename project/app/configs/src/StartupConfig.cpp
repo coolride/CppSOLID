@@ -13,8 +13,9 @@ std::optional<const StartupConfig> optionsToStartupConfig(int argc, char* argv[]
     // clang-format off
     desc.add_options()
         ("help", "Produce help message")
-        ("port", po::value<std::uint16_t>(), "Set server port")
-        ("format", po::value<types::ReportFormat>(), "Set tax report format (json or xml)");
+        ("port", po::value<std::uint16_t>()->default_value(8080), "Set server port")
+        ("format", po::value<types::ReportFormat>()->default_value( types::ReportFormat::Json, "json" ), "Set tax report format (json, xml or yaml)")
+        ("storage", po::value<types::StorageFormat>()->default_value( types::StorageFormat::Json, "json" ), "Set storage format (json, xml or yaml)");
     // clang-format on
 
     po::variables_map vm;
@@ -26,5 +27,9 @@ std::optional<const StartupConfig> optionsToStartupConfig(int argc, char* argv[]
         return std::nullopt;
     }
 
-    return StartupConfig{ vm["port"].as<std::uint16_t>(), vm["format"].as<types::ReportFormat>() };
+    return StartupConfig{
+        vm["port"].as<std::uint16_t>(),
+        vm["format"].as<types::ReportFormat>(),
+        vm["storage"].as<types::StorageFormat>()
+    };
 }

@@ -12,4 +12,4 @@ public:
     virtual std::unique_ptr<IReportParser> createReportParser() const = 0;
     virtual std::unique_ptr<ICredentialsParser> createCredentialsParser() const = 0;
 };
-} // namespace services
+} // namespace parsers
